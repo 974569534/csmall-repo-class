@@ -47,6 +47,7 @@ public class AdminSSOServiceImpl implements IAdminSSOService {
         if (userDetails == null) {
             throw new CoolSharkServiceException(ResponseCode.BAD_REQUEST, "登录失败！用户名密码错误");
         }
+        System.out.println(adminLoginDTO.getPassword()+","+userDetails.getPassword());
         if (!passwordEncoder.matches(adminLoginDTO.getPassword(), userDetails.getPassword())) {
             throw new CoolSharkServiceException(ResponseCode.BAD_REQUEST, "登录失败！用户名密码错误");
         }

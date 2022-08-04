@@ -17,7 +17,92 @@
         <result column="data" property="data"/>
     </resultMap>
 
+    <sql id="SimpleQuery">
+        <if test="true">
+            id,
+            user_id,
+            sku_id,
+            title,
+            main_picture,
+            price,
+            quantity,
+            gmt_create,
+            gmt_modified
+        </if>
+    </sql>
+<!--  查看购物车中是否包含sku信息  -->
+    <select id="selectExistsCart" resultType="cn.tedu.mall.pojo.order.model.OmsCart">
+        SELECT
+            <include refid="SimpleQuery"/>
+        FROM oms_cart
+        WHERE
+            user_id = #{userId}
+        AND sku_id = #{skuId}
+    </select>
+<!--  新增购物车中sku的信息  -->
+    <insert id="saveCart" useGeneratedKeys="true" keyColumn="id">
+        INSERT INTO oms_cart(
+                             user_id,
+                             sku_id,
+                             title,
+                             main_picture,
+                             price,
+                             quantity
+                            ) values(
+                             #{userId},
+                             #{skuId},
+                             #{title},
+                             #{mainPicture},
+                             #{price},
+                             #{quantity}
+                             )
+    </insert>
+<!--  根据id删除购物车信息  -->
+    <delete id="deleteCartsByIds">
+        DELETE FROM
+            oms_cart
+        WHERE
+            id in
+        <foreach collection="array" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+<!--    根据用户名id清空购物车    -->
+    <delete id="deleteAllCartsByUserId">
+        DELETE FROM
+            oms_cart
+        WHERE
+            user_id=#{userId}
+    </delete>
+<!--  根据userId和skuId删除商品  -->
+    <delete id="deleteCartByUserIdAndSkuId">
+        DELETE FROM
+            oms_cart
+        WHERE
+            user_id=#{userId}
+        AND
+            sku_id=#{skuId}
+    </delete>
 
+<!--  根据购物车id修改数量  -->
+    <update id="updateQuantityById">
+        UPDATE
+            oms_cart
+        SET
+            quantity=#{quantity}
+        WHERE
+            id=#{id}
+    </update>
+
+<!--  根据用户id查询sku信息  -->
+    <select id="selectCartByUserId" resultType="cn.tedu.mall.pojo.order.vo.CartStandardVO">
+        SELECT
+            <include refid="SimpleQuery"/>
+        FROM
+            oms_cart
+        WHERE
+            user_id=#{userId}
+    </select>
 
 </mapper>
 
